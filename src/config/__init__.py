@@ -1,0 +1,20 @@
+"""Configuration package."""
+from src.config.settings import (
+    SUPPORTED_CURRENCIES,
+    BASE_CURRENCY,
+    SOURCE_NAME,
+    BNM_XML_URL,
+    DEFAULT_CACHE_FILE,
+    REQUEST_TIMEOUT_SECONDS,
+    MAX_FALLBACK_DAYS,
+)
+
+__all__ = [
+    "SUPPORTED_CURRENCIES",
+    "BASE_CURRENCY",
+    "SOURCE_NAME",
+    "BNM_XML_URL",
+    "DEFAULT_CACHE_FILE",
+    "REQUEST_TIMEOUT_SECONDS",
+    "MAX_FALLBACK_DAYS",
+]
