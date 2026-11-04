@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ValCurs Date="04.11.2026" name="Official exchange rates">
+  <Valute ID="47">
+    <NumCode>978</NumCode>
+    <CharCode>EUR</CharCode>
+    <Nominal>1</Nominal>
+    <Name>Euro</Name>
+    <Value>19.5432</Value>
+  </Valute>
+  <Valute ID="44">
+    <NumCode>840</NumCode>
+    <CharCode>USD</CharCode>
+    <Nominal>1</Nominal>
+    <Name>US Dollar</Name>
+    <Value>18.1250</Value>
+  </Valute>
+  <Valute ID="49">
+    <NumCode>946</NumCode>
+    <CharCode>RON</CharCode>
+    <Nominal>1</Nominal>
+    <Name>Romanian Leu</Name>
+    <Value>3.9280</Value>
+  </Valute>
+  <Valute ID="45">
+    <NumCode>826</NumCode>
+    <CharCode>GBP</CharCode>
+    <Nominal>1</Nominal>
+    <Name>Pound Sterling</Name>
+    <Value>23.4500</Value>
+  </Valute>
+  <Valute ID="48">
+    <NumCode>980</NumCode>
+    <CharCode>UAH</CharCode>
+    <Nominal>10</Nominal>
+    <Name>Hryvnia</Name>
+    <Value>4.3500</Value>
+  </Valute>
+</ValCurs>

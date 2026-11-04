@@ -18,9 +18,9 @@
 
 **Purpose**: Initialize the project structure and dependency baseline for a Python 3.11+ Streamlit app.
 
-- [ ] T001 Create the repository structure for `src/`, `tests/unit/`, `tests/e2e/`, `tests/fixtures/`, and `docs/` per the plan (completion: directories exist and align with the implementation layout)
-- [ ] T002 Initialize the Python 3.11 environment and install `streamlit`, `requests`, `pytest`, and `selenium` with PowerShell setup instructions in `quickstart.md` (completion: dependency installation commands are documented and the environment is ready for local setup)
-- [ ] T003 [P] Create the initial package layout for `src/app`, `src/api`, `src/parsing`, `src/domain`, `src/cache`, and `src/config`, including the focused `RateProvider` protocol in `src/domain/ports.py` (completion: the module structure matches the technical design and the provider contract is narrow and independent of HTTP details)
+- [x] T001 Create the repository structure for `src/`, `tests/unit/`, `tests/e2e/`, `tests/fixtures/`, and `docs/` per the plan (completion: directories exist and align with the implementation layout)
+- [x] T002 Initialize the Python 3.11 environment and install `streamlit`, `requests`, `pytest`, and `selenium` with PowerShell setup instructions in `quickstart.md` (completion: dependency installation commands are documented and the environment is ready for local setup)
+- [x] T003 [P] Create the initial package layout for `src/app`, `src/api`, `src/parsing`, `src/domain`, `src/cache`, and `src/config`, including the focused `RateProvider` protocol in `src/domain/ports.py` (completion: the module structure matches the technical design and the provider contract is narrow and independent of HTTP details)
 
 ---
 
@@ -28,12 +28,12 @@
 
 **Purpose**: Define shared contracts, configuration, and base validation logic required before any story-specific work begins.
 
-- [ ] T004 Create shared configuration/constants for supported currencies, source metadata, and cache file path in `src/config/settings.py` (completion: `MDL`, `EUR`, `USD`, `RON`, `GBP`, and `UAH` are defined as valid codes and the cache location is centralized)
-- [ ] T005 [P] Define the shared data model for conversion requests, rate snapshots, conversion results, and validation errors in `src/domain/models.py` (completion: all required fields and validation constraints are represented in the model layer)
-- [ ] T006 Create the decimal-safe validation helpers for positive amounts and required field checks in `src/domain/validation.py` (completion: empty, zero, negative, alphabetic, and malformed inputs are rejected with clear validation errors)
-- [ ] T007 [P] Define the cache JSON contract and persistence helpers in `src/cache/rate_cache.py` (completion: valid snapshots are serialized without overwriting with invalid data and the cache survives a restart boundary in design)
-- [ ] T008 Configure the app-level error boundary and user-facing messaging pattern for conversion failures in `src/app/ui/streamlit_app.py` and supporting utilities (completion: failures are surfaced as clear messages without crashing the app)
-- [ ] T009 Create a small shared test fixture helper for CSV/XML-like sample inputs in `tests/fixtures/` and `tests/unit/` (completion: fixtures are reusable for parser, caching, and validation test cases without network dependency)
+- [x] T004 Create shared configuration/constants for supported currencies, source metadata, and cache file path in `src/config/settings.py` (completion: `MDL`, `EUR`, `USD`, `RON`, `GBP`, and `UAH` are defined as valid codes and the cache location is centralized)
+- [x] T005 [P] Define the shared data model for conversion requests, rate snapshots, conversion results, and validation errors in `src/domain/models.py` (completion: all required fields and validation constraints are represented in the model layer)
+- [x] T006 Create the decimal-safe validation helpers for positive amounts and required field checks in `src/domain/validation.py` (completion: empty, zero, negative, alphabetic, and malformed inputs are rejected with clear validation errors)
+- [x] T007 [P] Define the cache JSON contract and persistence helpers in `src/cache/rate_cache.py` (completion: valid snapshots are serialized without overwriting with invalid data and the cache survives a restart boundary in design)
+- [x] T008 Configure the app-level error boundary and user-facing messaging pattern for conversion failures in `src/app/ui/streamlit_app.py` and supporting utilities (completion: failures are surfaced as clear messages without crashing the app)
+- [x] T009 Create a small shared test fixture helper for CSV/XML-like sample inputs in `tests/fixtures/` and `tests/unit/` (completion: fixtures are reusable for parser, caching, and validation test cases without network dependency)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel.
 
@@ -52,10 +52,10 @@
 
 ### Application Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Build the Streamlit form and currency selectors in `src/app/ui/streamlit_app.py` (completion: the UI exposes amount, source currency, target currency, date, and Convert controls with default date behavior)
-- [ ] T013 [P] [US1] Implement the conversion calculation flow in `src/domain/conversion.py` (completion: conversion uses Decimal arithmetic and returns the unchanged amount when source equals target)
-- [ ] T014 [US1] Wire the form state to validation and conversion logic in `src/app/ui/streamlit_app.py` (completion: the Convert button remains disabled until required fields are valid and the result displays converted amount, effective date, and source name)
-- [ ] T015 [US1] Add the standard success message and result rendering in `src/app/ui/streamlit_app.py` (completion: successful conversions show value, effective rate date, and official source name without hidden assumptions)
+- [x] T012 [P] [US1] Build the Streamlit form and currency selectors in `src/app/ui/streamlit_app.py` (completion: the UI exposes amount, source currency, target currency, date, and Convert controls with default date behavior)
+- [x] T013 [P] [US1] Implement the conversion calculation flow in `src/domain/conversion.py` (completion: conversion uses Decimal arithmetic and returns the unchanged amount when source equals target)
+- [x] T014 [US1] Wire the form state to validation and conversion logic in `src/app/ui/streamlit_app.py` (completion: the Convert button remains disabled until required fields are valid and the result displays converted amount, effective date, and source name)
+- [x] T015 [US1] Add the standard success message and result rendering in `src/app/ui/streamlit_app.py` (completion: successful conversions show value, effective rate date, and official source name without hidden assumptions)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and independently testable.
 
@@ -74,10 +74,10 @@
 
 ### Application Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Implement the BNM HTTP request logic in `src/api/bnm_client.py` (completion: the client requests the official XML endpoint with `get_xml=1` and the selected date format `DD.MM.YYYY`, honors timeouts, and is only called by the provider adapter)
-- [ ] T019 [P] [US2] Implement XML parsing and rate normalization in `src/parsing/xml_parser.py` (completion: `CharCode`, `Nominal`, and `Value` are parsed, normalized to MDL-per-unit, and malformed payloads fail safely)
-- [ ] T020 [US2] Implement the BNM `RateProvider` adapter in `src/api/bnm_provider.py` using the HTTP client and XML parser (completion: it conforms to `src/domain/ports.py`, returns the shared snapshot contract, and another conforming provider can be substituted without changing conversion logic)
-- [ ] T021 [US2] Add source metadata handling for the official source name and effective date in `src/parsing/xml_parser.py` and `src/domain/models.py` (completion: the result retains the actual official source name and the effective rate date used)
+- [x] T018 [P] [US2] Implement the BNM HTTP request logic in `src/api/bnm_client.py` (completion: the client requests the official XML endpoint with `get_xml=1` and the selected date format `DD.MM.YYYY`, honors timeouts, and is only called by the provider adapter)
+- [x] T019 [P] [US2] Implement XML parsing and rate normalization in `src/parsing/xml_parser.py` (completion: `CharCode`, `Nominal`, and `Value` are parsed, normalized to MDL-per-unit, and malformed payloads fail safely)
+- [x] T020 [US2] Implement the BNM `RateProvider` adapter in `src/api/bnm_provider.py` using the HTTP client and XML parser (completion: it conforms to `src/domain/ports.py`, returns the shared snapshot contract, and another conforming provider can be substituted without changing conversion logic)
+- [x] T021 [US2] Add source metadata handling for the official source name and effective date in `src/parsing/xml_parser.py` and `src/domain/models.py` (completion: the result retains the actual official source name and the effective rate date used)
 
 **Checkpoint**: At this point, the app can fetch and parse official BNM data without leaking invalid XML to downstream conversion logic.
 
@@ -97,11 +97,11 @@
 
 ### Application Implementation for User Story 3
 
-- [ ] T025 [US3] Implement date fallback search logic in `src/domain/conversion.py` or a date-lookup helper using the `RateProvider` abstraction (completion: if no rate exists for the selected date, the app searches backward for the closest valid rate and records the fallback date without depending on an HTTP client)
-- [ ] T026 [US3] Implement missing-currency detection and the clear user-facing error path in `src/domain/conversion.py` and `src/app/ui/streamlit_app.py` (completion: selected currency absence from the effective date results in a clear message and no silent substitution)
-- [ ] T027 [US3] Implement the cache-read and cache-write workflow in `src/cache/rate_cache.py` (completion: valid snapshots persist to local JSON and are reused across restarts; invalid payloads are ignored without overwriting a valid cache)
-- [ ] T028 [US3] Implement offline and service-failure fallback handling in `src/api/bnm_client.py` and `src/app/ui/streamlit_app.py` (completion: when the service is unavailable or malformed, the app uses the last valid snapshot if present; otherwise it shows a clear, non-crashing error)
-- [ ] T029 [US3] Add clear result messaging for fallback dates and offline use in `src/app/ui/streamlit_app.py` (completion: the interface communicates whether a prior-date fallback or cached snapshot was used, with the actual real date shown)
+- [x] T025 [US3] Implement date fallback search logic in `src/domain/conversion.py` or a date-lookup helper using the `RateProvider` abstraction (completion: if no rate exists for the selected date, the app searches backward for the closest valid rate and records the fallback date without depending on an HTTP client)
+- [x] T026 [US3] Implement missing-currency detection and the clear user-facing error path in `src/domain/conversion.py` and `src/app/ui/streamlit_app.py` (completion: selected currency absence from the effective date results in a clear message and no silent substitution)
+- [x] T027 [US3] Implement the cache-read and cache-write workflow in `src/cache/rate_cache.py` (completion: valid snapshots persist to local JSON and are reused across restarts; invalid payloads are ignored without overwriting a valid cache)
+- [x] T028 [US3] Implement offline and service-failure fallback handling in `src/api/bnm_client.py` and `src/app/ui/streamlit_app.py` (completion: when the service is unavailable or malformed, the app uses the last valid snapshot if present; otherwise it shows a clear, non-crashing error)
+- [x] T029 [US3] Add clear result messaging for fallback dates and offline use in `src/app/ui/streamlit_app.py` (completion: the interface communicates whether a prior-date fallback or cached snapshot was used, with the actual real date shown)
 
 **Checkpoint**: At this point, the feature handles fallback, offline, and invalid data conditions safely and predictably.
 
@@ -119,9 +119,9 @@
 
 ### Application Implementation for User Story 4
 
-- [ ] T031 [P] [US4] Update `quickstart.md` with setup and validation steps for Windows PowerShell and local test execution (completion: the document includes prerequisites, installation commands, and validation scenarios)
-- [ ] T032 [P] [US4] Review and align `research.md`, `data-model.md`, `contracts/official-rate-feed.md`, and `spec.md` with the implementation plan (completion: all artifacts agree on currency codes, rate normalization, and fallback rules)
-- [ ] T033 [US4] Document supported error states, recovery paths, and test commands in `README.md` (completion: the user can understand recovery flows and the README documents commands to run unit tests, Selenium E2E tests, and the complete pytest suite)
+- [x] T031 [P] [US4] Update `quickstart.md` with setup and validation steps for Windows PowerShell and local test execution (completion: the document includes prerequisites, installation commands, and validation scenarios)
+- [x] T032 [P] [US4] Review and align `research.md`, `data-model.md`, `contracts/official-rate-feed.md`, and `spec.md` with the implementation plan (completion: all artifacts agree on currency codes, rate normalization, and fallback rules)
+- [x] T033 [US4] Document supported error states, recovery paths, and test commands in `README.md` (completion: the user can understand recovery flows and the README documents commands to run unit tests, Selenium E2E tests, and the complete pytest suite)
 
 **Checkpoint**: The project is ready for review, with clear documentation and validation coverage for all critical user stories.
 
@@ -131,7 +131,7 @@
 
 **Purpose**: Final cleanup across implementation and test surfaces.
 
-- [ ] T034 [P] Review and refactor shared validation and conversion paths to remove duplication across the app and test layers (completion: common logic is centralized without changing requirement semantics)
+- [x] T034 [P] Review and refactor shared validation and conversion paths to remove duplication across the app and test layers (completion: common logic is centralized without changing requirement semantics)
 - [ ] T035 [P] Run the focused pytest suite for conversion, parser, validation, cache, and integration tests (completion: key unit and integration tests pass with no live network dependency)
 - [ ] T036 [P] Validate the end-to-end quickstart flow from `quickstart.md` against the design requirements (completion: the documented steps cover successful conversion, invalid input, fallback, and offline cache behavior)
 - [ ] T037 Review Git branch and PR readiness for separate application implementation and pytest workstreams (completion: the app work and test work are clearly separable for different review tracks)
