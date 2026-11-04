@@ -121,6 +121,22 @@ A user needs confidence that the displayed result is based on the correct offici
 - **FR-015**: The application MUST not require registration, login, a database server, or payment processing to perform the requested currency conversion use case.
 - **FR-016**: The system MUST keep error states understandable and actionable so users know what went wrong and what to do next.
 - **FR-017**: The system MUST preserve the last valid cached exchange-rate snapshot, even after an invalid or failed refresh attempt, unless a newer valid snapshot replaces it.
+- **FR-018**: The application MUST be implemented in Python using Streamlit.
+- **FR-019**: The interface MUST use a consistent light theme, readable typography, rounded controls, and visually prominent conversion results.
+- **FR-020**: The interface MUST clearly distinguish validation errors, rate errors, and offline warnings, and remain usable on desktop and smaller screens.
+
+### Architecture and Quality Requirements
+
+- **QR-001**: UI rendering, conversion calculations, input validation, BNM API access, XML parsing, and cache persistence MUST have distinct responsibilities.
+- **QR-002**: Conversion logic MUST depend on a focused rate-provider abstraction so another provider can be added without rewriting conversion logic.
+- **QR-003**: Rate providers conforming to the provider contract MUST be interchangeable and honor the same observable behavior and result contract.
+- **QR-004**: Interfaces or protocols MUST be small and focused; business logic MUST NOT depend directly on a concrete HTTP client.
+- **QR-005**: The architecture MUST apply these principles without introducing abstractions that do not reduce complexity or support a current requirement.
+- **QR-006**: Automated unit tests MUST use pytest and remain separate from browser-level end-to-end tests.
+- **QR-007**: Browser-level end-to-end tests MUST use Selenium WebDriver with pytest and cover valid conversion, validation, the disabled Convert button, conversion result, effective rate date, and source name.
+- **QR-008**: Selenium tests SHOULD use Chrome in headless mode and explicit waits, and MUST use deterministic fixture-backed or stubbed rate data rather than require the live BNM service.
+- **QR-009**: Selenium E2E tests MUST be implemented on the `testing` branch.
+- **QR-010**: The README MUST document commands for running unit tests, Selenium E2E tests, and the complete test suite.
 
 ### Key Entities
 
@@ -141,6 +157,8 @@ A user needs confidence that the displayed result is based on the correct offici
 - **SC-006**: Cached exchange-rate data remains available across application restarts in 100% of persistence tests.
 - **SC-007**: The system provides a clear error and remains usable when no valid cache exists and the service fails.
 - **SC-008**: Invalid or malformed XML responses are rejected without crashing the application, and the system falls back to the last valid cached snapshot whenever one exists.
+- **SC-009**: The interface remains readable and operable at desktop and smaller-screen sizes, with a consistent light appearance, clearly visible errors/offline warnings, and a prominent result.
+- **SC-010**: The Selenium E2E suite passes in headless Chrome using deterministic rate data and verifies valid conversion, validation, disabled-button behavior, result amount, effective date, and source name.
 
 ## Assumptions
 
