@@ -4,6 +4,8 @@ from decimal import Decimal
 from html import escape
 from pathlib import Path
 
+import logging
+import os
 import streamlit as st
 
 from src.api.bnm_client import BnmClient
@@ -11,7 +13,7 @@ from src.api.bnm_provider import BnmRateProvider
 from src.cache.rate_cache import RateCache
 from src.config.settings import DEFAULT_CACHE_FILE, SOURCE_NAME, SUPPORTED_CURRENCIES
 from src.domain.conversion import CurrencyConverter, CurrencyUnavailableError, ExchangeRateUnavailableError
-from src.domain.models import ConversionRequest, ConversionResult
+from src.domain.models import ConversionRequest, ConversionResult, RateSnapshot
 from src.domain.validation import validate_amount
 
 CURRENCY_NAMES = {
@@ -27,6 +29,28 @@ def _inject_custom_css() -> None:
 
 def get_converter() -> CurrencyConverter:
     """Composition root and a seam for deterministic UI tests."""
+    test_fixture = os.environ.get("CONVERTER_TEST_FIXTURE")
+    if test_fixture:
+        from src.parsing.xml_parser import parse_bnm_xml
+
+        xml_text = Path(test_fixture).read_text(encoding="utf-8")
+        snapshot = parse_bnm_xml(xml_text)
+
+        class StaticFixtureProvider:
+            def get_rates(self, target_date: date) -> RateSnapshot | None:
+                return snapshot
+
+        return CurrencyConverter(rate_provider=StaticFixtureProvider())
+
+    test_offline = os.environ.get("CONVERTER_TEST_OFFLINE_CACHE")
+    if test_offline:
+        class FailingTestProvider:
+            def get_rates(self, target_date: date) -> RateSnapshot | None:
+                raise ConnectionError("Simulated offline mode")
+
+        cache = RateCache(Path(test_offline))
+        return CurrencyConverter(rate_provider=FailingTestProvider(), cache=cache)
+
     cache = RateCache(DEFAULT_CACHE_FILE)
     provider = BnmRateProvider(client=BnmClient(), cache=cache)
     return CurrencyConverter(rate_provider=provider, cache=cache)
@@ -155,6 +179,7 @@ def render_app() -> None:
                 except (CurrencyUnavailableError, ExchangeRateUnavailableError) as exc:
                     st.session_state.conversion_error = str(exc)
                 except Exception:
+                    logging.getLogger(__name__).exception("Conversion failed unexpectedly")
                     st.session_state.conversion_error = "Conversion could not be completed. Check your connection or try another date."
         st.markdown('<p class="form-footnote">MDL · EUR · USD · RON · GBP · UAH</p>', unsafe_allow_html=True)
     with result_col, st.container(border=True):

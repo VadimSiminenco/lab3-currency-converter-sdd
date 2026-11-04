@@ -132,7 +132,7 @@
 **Purpose**: Final cleanup across implementation and test surfaces.
 
 - [x] T034 [P] Review and refactor shared validation and conversion paths to remove duplication across the app and test layers (completion: common logic is centralized without changing requirement semantics)
-- [ ] T035 [P] Run the focused pytest suite for conversion, parser, validation, cache, and integration tests (completion: key unit and integration tests pass with no live network dependency)
+- [x] T035 [P] Run the focused pytest suite for conversion, parser, validation, cache, and integration tests (completion: key unit and integration tests pass with no live network dependency)
 - [ ] T036 [P] Validate the end-to-end quickstart flow from `quickstart.md` against the design requirements (completion: the documented steps cover successful conversion, invalid input, fallback, and offline cache behavior)
 - [ ] T037 Review Git branch and PR readiness for separate application implementation and pytest workstreams (completion: the app work and test work are clearly separable for different review tracks)
 
@@ -140,9 +140,9 @@
 
 All tasks in this section MUST be implemented on the `testing` branch. Keep these tests in `tests/e2e/`, separate from `tests/unit/`, and use deterministic fixture-backed or stubbed rate data rather than the live BNM service.
 
-- [ ] T038 [P] Add the Selenium pytest browser harness and deterministic rate fixture/stub for the Streamlit app in `tests/e2e/` (completion: Chrome can run headlessly, explicit waits are used, and browser tests do not require live network access)
-- [ ] T039 [US1] Add a Selenium E2E test for a valid conversion in `tests/e2e/test_conversion_browser.py` (completion: the browser submits a valid request and verifies the converted result, effective rate date, and source name)
-- [ ] T040 [US2] Add Selenium E2E checks for validation and the Convert button in `tests/e2e/test_conversion_browser.py` (completion: required/invalid amount states are clearly reported and the Convert button remains disabled until required values are valid)
+- [x] T038 [P] Add the Selenium pytest browser harness and deterministic rate fixture/stub for the Streamlit app in `tests/e2e/` (completion: Chrome can run headlessly, explicit waits are used, and browser tests do not require live network access)
+- [x] T039 [US1] Add a Selenium E2E test for a valid conversion in `tests/e2e/test_conversion_browser.py` (completion: the browser submits a valid request and verifies the converted result, effective rate date, and source name)
+- [x] T040 [US2] Add Selenium E2E checks for validation and the Convert button in `tests/e2e/test_conversion_browser.py` (completion: required/invalid amount states are clearly reported and the Convert button remains disabled until required values are valid)
 
 ---
 
