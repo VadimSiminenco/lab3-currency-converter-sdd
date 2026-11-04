@@ -4,7 +4,7 @@
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: Pytest test tasks are included because the feature specification explicitly requires automated validation and network-independent fixtures.
+**Tests**: Pytest unit and integration test tasks use network-independent fixtures. Selenium WebDriver browser E2E tasks are separate, use deterministic fixture-backed or stubbed rates, and are assigned to the `testing` branch.
 
 **Organization**: Tasks are grouped by story to enable independent implementation and testing of each story.
 
@@ -18,9 +18,9 @@
 
 **Purpose**: Initialize the project structure and dependency baseline for a Python 3.11+ Streamlit app.
 
-- [ ] T001 Create the repository structure for `src/`, `tests/`, `tests/unit/`, `tests/fixtures/`, and `docs/` per the plan (completion: directories exist and align with the implementation layout)
-- [ ] T002 Initialize the Python 3.11 environment and install `streamlit`, `requests`, and `pytest` with PowerShell setup instructions in `quickstart.md` (completion: dependency installation commands are documented and the environment is ready for local setup)
-- [ ] T003 [P] Create the initial package layout for `src/app`, `src/api`, `src/parsing`, `src/domain`, `src/cache`, and `src/config` (completion: the module structure matches the technical design and all folders exist)
+- [ ] T001 Create the repository structure for `src/`, `tests/unit/`, `tests/e2e/`, `tests/fixtures/`, and `docs/` per the plan (completion: directories exist and align with the implementation layout)
+- [ ] T002 Initialize the Python 3.11 environment and install `streamlit`, `requests`, `pytest`, and `selenium` with PowerShell setup instructions in `quickstart.md` (completion: dependency installation commands are documented and the environment is ready for local setup)
+- [ ] T003 [P] Create the initial package layout for `src/app`, `src/api`, `src/parsing`, `src/domain`, `src/cache`, and `src/config`, including the focused `RateProvider` protocol in `src/domain/ports.py` (completion: the module structure matches the technical design and the provider contract is narrow and independent of HTTP details)
 
 ---
 
@@ -74,9 +74,9 @@
 
 ### Application Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Implement the BNM HTTP request logic in `src/api/bnm_client.py` (completion: the client requests the official XML endpoint with `get_xml=1` and the selected date format `DD.MM.YYYY` and honors timeouts)
+- [ ] T018 [P] [US2] Implement the BNM HTTP request logic in `src/api/bnm_client.py` (completion: the client requests the official XML endpoint with `get_xml=1` and the selected date format `DD.MM.YYYY`, honors timeouts, and is only called by the provider adapter)
 - [ ] T019 [P] [US2] Implement XML parsing and rate normalization in `src/parsing/xml_parser.py` (completion: `CharCode`, `Nominal`, and `Value` are parsed, normalized to MDL-per-unit, and malformed payloads fail safely)
-- [ ] T020 [US2] Add live rate retrieval orchestration in `src/api/bnm_client.py` and `src/parsing/xml_parser.py` (completion: a valid response yields a usable normalized rate map for the supported currencies, while invalid responses are surfaced as errors)
+- [ ] T020 [US2] Implement the BNM `RateProvider` adapter in `src/api/bnm_provider.py` using the HTTP client and XML parser (completion: it conforms to `src/domain/ports.py`, returns the shared snapshot contract, and another conforming provider can be substituted without changing conversion logic)
 - [ ] T021 [US2] Add source metadata handling for the official source name and effective date in `src/parsing/xml_parser.py` and `src/domain/models.py` (completion: the result retains the actual official source name and the effective rate date used)
 
 **Checkpoint**: At this point, the app can fetch and parse official BNM data without leaking invalid XML to downstream conversion logic.
@@ -97,7 +97,7 @@
 
 ### Application Implementation for User Story 3
 
-- [ ] T025 [US3] Implement date fallback search logic across prior calendar dates in `src/domain/conversion.py` or a date-lookup helper (completion: if no rate exists for the selected date, the app searches backward for the closest valid rate and records the fallback date)
+- [ ] T025 [US3] Implement date fallback search logic in `src/domain/conversion.py` or a date-lookup helper using the `RateProvider` abstraction (completion: if no rate exists for the selected date, the app searches backward for the closest valid rate and records the fallback date without depending on an HTTP client)
 - [ ] T026 [US3] Implement missing-currency detection and the clear user-facing error path in `src/domain/conversion.py` and `src/app/ui/streamlit_app.py` (completion: selected currency absence from the effective date results in a clear message and no silent substitution)
 - [ ] T027 [US3] Implement the cache-read and cache-write workflow in `src/cache/rate_cache.py` (completion: valid snapshots persist to local JSON and are reused across restarts; invalid payloads are ignored without overwriting a valid cache)
 - [ ] T028 [US3] Implement offline and service-failure fallback handling in `src/api/bnm_client.py` and `src/app/ui/streamlit_app.py` (completion: when the service is unavailable or malformed, the app uses the last valid snapshot if present; otherwise it shows a clear, non-crashing error)
@@ -113,7 +113,7 @@
 
 **Independent Test**: Reviewers can follow the project guidance and validate the happy path, fallback path, and offline path without implementation-level ambiguity.
 
-### Pytest Tests for User Story 4
+### Unit and Integration Tests for User Story 4
 
 - [ ] T030 [P] [US4] Add a small integration-style pytest flow covering conversion, fallback, and cache persistence in `tests/integration/test_conversion_flow.py` (completion: the end-to-end fixture path validates the main scenarios without live network access)
 
@@ -121,7 +121,7 @@
 
 - [ ] T031 [P] [US4] Update `quickstart.md` with setup and validation steps for Windows PowerShell and local test execution (completion: the document includes prerequisites, installation commands, and validation scenarios)
 - [ ] T032 [P] [US4] Review and align `research.md`, `data-model.md`, `contracts/official-rate-feed.md`, and `spec.md` with the implementation plan (completion: all artifacts agree on currency codes, rate normalization, and fallback rules)
-- [ ] T033 [US4] Document the supported error states and recovery paths in the project docs or README (completion: the user can understand recovery flows and no hidden assumptions remain)
+- [ ] T033 [US4] Document supported error states, recovery paths, and test commands in `README.md` (completion: the user can understand recovery flows and the README documents commands to run unit tests, Selenium E2E tests, and the complete pytest suite)
 
 **Checkpoint**: The project is ready for review, with clear documentation and validation coverage for all critical user stories.
 
@@ -135,6 +135,14 @@
 - [ ] T035 [P] Run the focused pytest suite for conversion, parser, validation, cache, and integration tests (completion: key unit and integration tests pass with no live network dependency)
 - [ ] T036 [P] Validate the end-to-end quickstart flow from `quickstart.md` against the design requirements (completion: the documented steps cover successful conversion, invalid input, fallback, and offline cache behavior)
 - [ ] T037 Review Git branch and PR readiness for separate application implementation and pytest workstreams (completion: the app work and test work are clearly separable for different review tracks)
+
+### Selenium Browser E2E Tests (testing branch)
+
+All tasks in this section MUST be implemented on the `testing` branch. Keep these tests in `tests/e2e/`, separate from `tests/unit/`, and use deterministic fixture-backed or stubbed rate data rather than the live BNM service.
+
+- [ ] T038 [P] Add the Selenium pytest browser harness and deterministic rate fixture/stub for the Streamlit app in `tests/e2e/` (completion: Chrome can run headlessly, explicit waits are used, and browser tests do not require live network access)
+- [ ] T039 [US1] Add a Selenium E2E test for a valid conversion in `tests/e2e/test_conversion_browser.py` (completion: the browser submits a valid request and verifies the converted result, effective rate date, and source name)
+- [ ] T040 [US2] Add Selenium E2E checks for validation and the Convert button in `tests/e2e/test_conversion_browser.py` (completion: required/invalid amount states are clearly reported and the Convert button remains disabled until required values are valid)
 
 ---
 
@@ -182,7 +190,8 @@ Task: "Implement persistent cache handling in src/cache/rate_cache.py"
 Task: "Add pytest conversion tests in tests/unit/test_conversion.py"
 Task: "Add pytest parser tests in tests/unit/test_parser.py"
 Task: "Add pytest cache tests in tests/unit/test_cache.py"
-Task: "Add end-to-end integration tests in tests/integration/test_conversion_flow.py"
+Task: "Add pytest integration tests in tests/integration/test_conversion_flow.py"
+Task: "Add Selenium browser E2E tests in tests/e2e/test_conversion_browser.py on the testing branch"
 ```
 
 ---
@@ -210,8 +219,9 @@ Task: "Add end-to-end integration tests in tests/integration/test_conversion_flo
 With separate implementation teams:
 
 1. Team A handles application implementation tasks in `src/`
-2. Team B handles pytest tasks under `tests/`
-3. Each workstream is reviewable independently via separate Git branches and pull requests without mixing source code changes and tests
+2. Team B handles unit and integration pytest tasks under `tests/unit/` and `tests/integration/`
+3. Selenium E2E tasks T038-T040 are implemented on the dedicated `testing` branch
+4. Each workstream is reviewable independently without mixing source code changes and tests
 
 ---
 
