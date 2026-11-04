@@ -142,7 +142,9 @@ Streamlit will launch a local web server (typically at `http://localhost:8501`) 
 
 ## Test Execution
 
-The current implementation contains test fixtures only; the unit, integration and Selenium suites below are planned. Running pytest before test modules are added reports "no tests ran" (exit code 5). Do not describe this as a passing suite. Selenium E2E implementation belongs on the `testing` branch.
+The `testing` branch contains pytest unit/integration tests and four Selenium browser tests using deterministic XML data. On 2026-11-04, 110 unit/integration tests and 4 Selenium tests passed in separate runs. Browser tests require Chrome and a compatible driver; Selenium Manager may need network access to provision the driver, while exchange-rate data comes from fixtures rather than live BNM.
+
+Run with the project's virtual environment: `.\.venv\Scripts\python.exe -m pytest -q`. For separate runs, use `-m pytest tests/unit tests/integration -q` and `-m pytest tests/e2e -q`. The current four browser tests cover invalid amounts/disabled Convert, valid conversion and metadata, clearing stale results, and swapping currencies. Browser-level offline/fallback scenarios are not yet covered by these four tests.
 
 The UI refresh uses a responsive light theme, a separate result panel, requested/effective dates, explicit offline/fallback/no-lookup states, and a calculation explanation. Input changes clear the previous result. Widget keys and result/error test IDs are retained for future Selenium tests. CSS lives in `src/app/ui/styles.css`.
 

@@ -1,9 +1,10 @@
 """Domain port interfaces and protocols."""
 from datetime import date
-from typing import Optional, Protocol
+from typing import Optional, Protocol, runtime_checkable
 from src.domain.models import RateSnapshot
 
 
+@runtime_checkable
 class RateProvider(Protocol):
     """Protocol for fetching exchange rate snapshots from an exchange rate source.
 
